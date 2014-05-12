@@ -1,0 +1,49 @@
+<html ng-app="who" ng-controller="WhoCtrl as whoCtrl">
+<head>
+  <title>{{whoCtrl.pageTitle}}</title>
+  <script src="third_party/_.js"></script>
+  <script src="third_party/angular.min.js"></script>
+  <script src="third_party/mousetrap.min.js"></script>
+  <script src="third_party/hotkeys.js"></script>
+  <script src="config.js"></script>
+  <script src="who.js"></script>
+  <link rel="stylesheet" type="text/css" href="css.css">
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/vnd.microsoft.icon" />
+</head>
+<body>
+  <h1 ng-bind-html="whoCtrl.pageHeader">tah dah</h1>
+  <div ng-hide="whoCtrl.done">
+    <div class="score">Score: {{whoCtrl.score}}</div>
+
+    <div class="headshot-container">
+      <img ng-src="{{whoCtrl.peep.img}}">
+    </div>
+    <div class="guess-option" ng-click="whoCtrl.guess(option)"
+         ng-repeat="option in whoCtrl.peep.choices"
+         ng-class="{correct: option == whoCtrl.guessed && whoCtrl.correct === true,
+                   incorrect: option == whoCtrl.guessed && whoCtrl.correct === false}">
+      {{option.name}} - {{option.dept}}
+    </div>
+
+
+    <pre>
+
+
+
+    </pre>
+
+    <h2>TODO</h2>
+    <li>show correct answer</li>
+    <li>big red X and Big green checkmark</li>
+    <li>first names only</li>
+    <li>departments...</li>
+    <li>type in name...</li>
+  </div>
+  <div ng-show="whoCtrl.done">
+    <p>Game over!</p>
+
+    <p>Your score was {{whoCtrl.score}} out of {{whoCtrl.peeps.length}}.</p>
+
+    <button ng-click="whoCtrl.reset()">Try again</button>
+  </div>
+</body>

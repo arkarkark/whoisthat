@@ -1,0 +1,34 @@
+body {
+   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+   font-weight: 300;
+}
+
+h1 {
+  font-size: 64px;
+  font-weight: 400;
+  margin-bottom: 0.1em;
+}
+
+h1 img {
+  position: relative;
+  top: 5px;
+  margin-right: -4px;
+  padding-left: 20px;
+
+}
+
+.headshot-container {
+  max-width: 240;
+  max-height: 240;
+  overflow: hidden;
+}
+.correct {
+  color: green;
+}
+.incorrect {
+  color: red;
+}
+
+.guess-option {
+  padding: 0.5em;
+}
