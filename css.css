@@ -32,3 +32,27 @@ h1 img {
 .guess-option {
   padding: 0.5em;
 }
+
+.check {
+  overflow: hidden;
+  max-width: 25px;
+  width: 25px;
+  display: inline-block;
+}
+
+.check img {
+  max-width: 50px;
+  width: 50px;
+}
+
+.check.none {
+  opacity: 0;
+}
+
+.check.yes {
+
+}
+
+.check.no img{
+  margin-left: -25px;
+}

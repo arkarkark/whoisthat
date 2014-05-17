@@ -11,7 +11,8 @@
   <link rel="shortcut icon" href="img/favicon.ico" type="image/vnd.microsoft.icon" />
 </head>
 <body>
-  <h1 ng-bind-html="whoCtrl.pageHeader">tah dah</h1>
+  <h1 ng-bind-html="whoCtrl.pageHeader"></h1>
+
   <div ng-hide="whoCtrl.done">
     <div class="score">Score: {{whoCtrl.score}}</div>
 
@@ -20,24 +21,15 @@
     </div>
     <div class="guess-option" ng-click="whoCtrl.guess(option)"
          ng-repeat="option in whoCtrl.peep.choices"
-         ng-class="{correct: option == whoCtrl.guessed && whoCtrl.correct === true,
-                   incorrect: option == whoCtrl.guessed && whoCtrl.correct === false}">
+         ng-class="{correct: whoCtrl.guessed && option == whoCtrl.peep,
+                    incorrect: whoCtrl.guessed == option && option != whoCtrl.peep}">
+      <span class="check"
+            ng-class="{none: option != whoCtrl.guessed,
+                       yes:  option == whoCtrl.guessed && whoCtrl.correct === true,
+                       no: option == whoCtrl.guessed && whoCtrl.correct === false}"
+            ><img src="third_party/red-32259.svg"></span>
       {{option.name}} - {{option.dept}}
     </div>
-
-
-    <pre>
-
-
-
-    </pre>
-
-    <h2>TODO</h2>
-    <li>show correct answer</li>
-    <li>big red X and Big green checkmark</li>
-    <li>first names only</li>
-    <li>departments...</li>
-    <li>type in name...</li>
   </div>
   <div ng-show="whoCtrl.done">
     <p>Game over!</p>
