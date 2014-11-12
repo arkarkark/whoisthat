@@ -28,7 +28,7 @@
                        yes:  option == whoCtrl.guessed && whoCtrl.correct === true,
                        no: option == whoCtrl.guessed && whoCtrl.correct === false}"
             ><img src="third_party/red-32259.svg"></span>
-      {{option.name}} - {{option.dept}}
+      {{$index + 1}}. {{option.name}} - {{option.dept}}
     </div>
   </div>
   <div ng-show="whoCtrl.done">
