@@ -18,9 +18,13 @@ h1 img {
 }
 
 .headshot-container {
-  max-width: 240;
-  max-height: 240;
+  max-width: 180;
+  max-height: 180;
   overflow: hidden;
+}
+.headshot-container img {
+  max-width: 180;
+  max-height: 180;
 }
 .correct {
   color: green;
