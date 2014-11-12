@@ -17,7 +17,7 @@
     <div class="score">Score: {{whoCtrl.score}}</div>
 
     <div class="headshot-container">
-      <img ng-src="{{whoCtrl.peep.img}}">
+      <img ng-src="{{whoCtrl.peep.img}}" onprogress="console.log('loading')">
     </div>
     <div class="guess-option" ng-click="whoCtrl.guess(option)"
          ng-repeat="option in whoCtrl.peep.choices"

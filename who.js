@@ -11,7 +11,6 @@ choose a random element from an array
     var ans;
     ans = arr[Math.floor(Math.random() * arr.length)];
     if ((opt_not && (opt_not === ans || opt_not.indexOf(ans) !== -1)) || ((opt_hasFemaleName != null) && ans.hasFemaleName !== opt_hasFemaleName)) {
-      console.log(ans.name, ans.hasFemaleName, opt_hasFemaleName, opt_not);
       return choose(arr, opt_not, opt_hasFemaleName);
     }
     return ans;
@@ -43,9 +42,11 @@ choose a random element from an array
   };
 
   WhoCtrl.prototype.getGuessCallback = function(idx) {
-    return angular.bind(this, function() {
-      this.guess(this.peep.choices[idx]);
-    });
+    return (function(_this) {
+      return function() {
+        return _this.guess(_this.peep.choices[idx]);
+      };
+    })(this);
   };
 
   WhoCtrl.prototype.turnIntoObjects = function(peeps) {
@@ -74,7 +75,6 @@ choose a random element from an array
 
   WhoCtrl.prototype.addChoices = function(peeps) {
     return peeps.map((function(x) {
-      console.log(x);
       x.choices = this.choices(x, peeps);
       return x;
     }), this);
@@ -96,22 +96,28 @@ choose a random element from an array
     if (guess === this.peep) {
       this.correct = true;
       this.score += 1;
-      this.timeout(angular.bind(this, this.nextPeep), 500);
+      return this.timeout(angular.bind(this, this.nextPeep), 500);
     } else {
       this.correct = false;
-      this.timeout(angular.bind(this, this.nextPeep), 3000);
+      return this.timeout(angular.bind(this, this.nextPeep), 3000);
     }
   };
 
   WhoCtrl.prototype.nextPeep = function() {
+    var nextnext;
     this.index += 1;
     this.correct = void 0;
     this.guessed = void 0;
     if (this.index < this.peeps.length) {
       this.peep = this.peeps[this.index];
+      if (this.index + 1 < this.peeps.length) {
+        nextnext = new Image();
+        nextnext.src = this.peeps[this.index + 1].img;
+      }
     } else {
       this.gameOver();
     }
+    return this.peep;
   };
 
   WhoCtrl.prototype.gameOver = function() {
@@ -120,8 +126,8 @@ choose a random element from an array
 
   WhoCtrl.prototype.reset = function() {
     this.peeps = shuffle(this.addChoices(this.turnIntoObjects(peepsData)));
-    this.index = 0;
-    this.peep = this.peeps[0];
+    this.index = -1;
+    this.nextPeep();
     this.score = 0;
     this.done = false;
     this.guessed = void 0;

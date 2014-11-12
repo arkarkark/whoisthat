@@ -16,7 +16,6 @@ choose = (arr, opt_not, opt_hasFemaleName) ->
   if ((opt_not && (opt_not is ans || opt_not.indexOf(ans) != -1)) ||
       (opt_hasFemaleName? && ans.hasFemaleName != opt_hasFemaleName))
     # Try again... don't judge me!
-    console.log(ans.name, ans.hasFemaleName, opt_hasFemaleName, opt_not)
     return choose(arr, opt_not, opt_hasFemaleName)
   ans
 
@@ -46,9 +45,7 @@ WhoCtrl = ($sce, $timeout, hotkeys) ->
   @
 
 WhoCtrl::getGuessCallback = (idx) ->
-  angular.bind this, ->
-    @guess @peep.choices[idx]
-    return
+  => @guess(@peep.choices[idx])
 
 
 WhoCtrl::turnIntoObjects = (peeps) ->
@@ -68,15 +65,14 @@ WhoCtrl::isFemaleName = (name) ->
 
 WhoCtrl::addChoices = (peeps) ->
   peeps.map ((x) ->
-    console.log(x)
     x.choices = @choices(x, peeps)
     x
   ), this
 
 WhoCtrl::choices = (peep, peeps) ->
   ans = [peep]
-  ans.push choose(peeps, ans, peep.hasFemaleName)
-  ans.push choose(peeps, ans, peep.hasFemaleName)
+  ans.push(choose(peeps, ans, peep.hasFemaleName))
+  ans.push(choose(peeps, ans, peep.hasFemaleName))
   shuffle(ans)
 
 WhoCtrl::guess = (guess) ->
@@ -89,7 +85,6 @@ WhoCtrl::guess = (guess) ->
   else
     @correct = false
     @timeout angular.bind(this, @nextPeep), 3000
-  return
 
 WhoCtrl::nextPeep = ->
   @index += 1
@@ -97,9 +92,13 @@ WhoCtrl::nextPeep = ->
   @guessed = undefined
   if @index < @peeps.length
     @peep = @peeps[@index]
+    # pre-fecth the next image
+    if @index + 1 < @peeps.length
+      nextnext = new Image()
+      nextnext.src = @peeps[@index + 1].img
   else
     @gameOver()
-  return
+  @peep
 
 WhoCtrl::gameOver = ->
   @done = true
@@ -107,8 +106,8 @@ WhoCtrl::gameOver = ->
 
 WhoCtrl::reset = ->
   @peeps = shuffle(@addChoices(@turnIntoObjects(peepsData)))
-  @index = 0
-  @peep = @peeps[0]
+  @index = -1
+  @nextPeep()
   @score = 0
   @done = false
   @guessed = undefined
