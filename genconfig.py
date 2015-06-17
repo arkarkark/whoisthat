@@ -41,7 +41,7 @@ def Main():
 
       var femaleNames = ('carolyn,lara,elfe,margaret,lissa,elena,anika,sara,emi,courtney,jenny,laura,' +
           'jeanne,esther,nicole,lindsey,erin,kendra,kimberly,abby,brie,amber,angela,kelly,alisa,haarthi,' +
-          'pansy,avery,katherine').split(',');
+          'pansy,avery,katherine,megan,jen,jennifer,renee,caitlin').split(',');
 
 
       module = module || {};
