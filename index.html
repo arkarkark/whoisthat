@@ -14,7 +14,7 @@
   <h1 ng-bind-html="whoCtrl.pageHeader"></h1>
 
   <div ng-hide="whoCtrl.done">
-    <div class="score">Score: {{whoCtrl.score}}</div>
+    <div class="score">{{whoCtrl.count}} guess of {{whoCtrl.total}} {{whoCtrl.countPercent()}} - Score: {{whoCtrl.score}} {{whoCtrl.scorePercent()}}</div>
 
     <div class="headshot-container">
       <img ng-src="{{whoCtrl.peep.img}}" onprogress="console.log('loading')">

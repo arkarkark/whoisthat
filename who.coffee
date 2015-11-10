@@ -75,6 +75,14 @@ WhoCtrl::choices = (peep, peeps) ->
   ans.push(choose(peeps, ans, peep.hasFemaleName))
   shuffle(ans)
 
+WhoCtrl::countPercent = ->
+  return "" unless @total
+  "(#{Math.floor((@count * 100) / @total)}%)"
+
+WhoCtrl::scorePercent = ->
+  return "" unless @count
+  "(#{Math.floor((@score * 100) / @count)}%)"
+
 WhoCtrl::guess = (guess) ->
   return  if @guessed
   @guessed = guess
@@ -85,6 +93,7 @@ WhoCtrl::guess = (guess) ->
   else
     @correct = false
     @timeout angular.bind(this, @nextPeep), 3000
+  @count += 1
 
 WhoCtrl::nextPeep = ->
   @index += 1
@@ -109,6 +118,8 @@ WhoCtrl::reset = ->
   @index = -1
   @nextPeep()
   @score = 0
+  @count = 0
+  @total = @peeps.length
   @done = false
   @guessed = undefined
   return
