@@ -37,6 +37,7 @@ WhoCtrl = ($sce, $timeout, hotkeys) ->
   @timeout = $timeout
   @pageTitle = pageTitle
   @pageHeader = $sce.trustAsHtml(pageHeader)
+  @pageFooter = $sce.trustAsHtml(pageFooter)
   @reset()
   hotkeys.add "1", "Select the first person", @getGuessCallback(0)
   hotkeys.add "2", "Select the second person", @getGuessCallback(1)

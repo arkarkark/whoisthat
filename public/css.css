@@ -1,6 +1,7 @@
 body {
    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
    font-weight: 300;
+   padding: 20px;
 }
 
 h1 {
@@ -13,14 +14,19 @@ h1 img {
   position: relative;
   top: 5px;
   margin-right: -4px;
-  padding-left: 20px;
 
+}
+
+.score {
+  padding: 20px 25px;
 }
 
 .headshot-container {
   max-width: 180;
   max-height: 180;
   overflow: hidden;
+  padding-left: 25px;
+  padding-bottom: 20px;
 }
 .headshot-container img {
   max-width: 180;
@@ -34,7 +40,6 @@ h1 img {
 }
 
 .guess-option {
-  padding: 0.5em;
 }
 
 .check {
@@ -59,4 +64,10 @@ h1 img {
 
 .check.no img{
   margin-left: -25px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 20;
+  left: 20;
 }
