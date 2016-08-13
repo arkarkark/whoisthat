@@ -4,3 +4,5 @@ bak
 looker.url
 image_base_dir.url
 .firebaserc
+node_modules
+public/config\ *

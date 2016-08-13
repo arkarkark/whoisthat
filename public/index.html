@@ -30,13 +30,49 @@
             ><img src="third_party/red-32259.svg"></span>
       {{$index + 1}}. {{option.name}} - {{option.dept}}
     </div>
+    <div class="quit">
+      <button ng-click="whoCtrl.quit()">Quit</button>
+    </div>
+
   </div>
   <div ng-show="whoCtrl.done">
-    <p>Game over!</p>
+    <div ng-if="whoCtrl.score">
+      <p>Game over!</p>
 
-    <p>Your score was {{whoCtrl.score}} out of {{whoCtrl.peeps.length}}.</p>
+      <p>Your score was {{whoCtrl.score}} out of {{whoCtrl.peeps.length}}.</p>
+      <hr>
+    </div>
 
-    <button ng-click="whoCtrl.reset()">Try again</button>
+    <h2>Identify:</h2>
+
+    <ul>
+
+      <li ng-repeat="x in whoCtrl.ranges">
+        <label>
+          <input name="src" ng-change="whoCtrl.choose = x" ng-model="whoCtrl.identify" type="radio" ng-value="x">{{x == 10000 ? "Everyone" : x + " most recent Lookers"}}
+        </label>
+      </li>
+    </ul>
+
+    <h2>Choose from:</h2>
+
+    <ul>
+      <li ng-repeat="x in whoCtrl.ranges" ng-hide="whoCtrl.identify > x">
+        <label>
+          <input name="choice" ng-model="whoCtrl.choose" type="radio" ng-value="x">{{
+            x == 10000 ? "Everyone" : x + " most recent Lookers"
+          }}
+        </label>
+      </li>
+    </ul>
+
+
+    <div>
+      <button ng-show="whoCtrl.score" ng-click="whoCtrl.reset()">Try again</button>
+      <button ng-hide="whoCtrl.score" ng-click="whoCtrl.reset()">Play!</button>
+    </div>
+
+
   </div>
   <div class="footer" ng-bind-html="whoCtrl.pageFooter"></div>
 </body>

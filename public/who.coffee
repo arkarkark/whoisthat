@@ -38,11 +38,15 @@ WhoCtrl = ($sce, $timeout, hotkeys) ->
   @pageTitle = pageTitle
   @pageHeader = $sce.trustAsHtml(pageHeader)
   @pageFooter = $sce.trustAsHtml(pageFooter)
-  @reset()
+  @done = true
   hotkeys.add "1", "Select the first person", @getGuessCallback(0)
   hotkeys.add "2", "Select the second person", @getGuessCallback(1)
   hotkeys.add "3", "Select the third person", @getGuessCallback(2)
+  @ranges = [10000,100,50,10]
+  @identify = 10000
+  @choose = 10000
 
+  console.log("done", @done)
   @
 
 WhoCtrl::getGuessCallback = (idx) ->
@@ -64,9 +68,9 @@ WhoCtrl::isFemaleName = (name) ->
     return true if name.indexOf(f) == 0
   return false
 
-WhoCtrl::addChoices = (peeps) ->
+WhoCtrl::addChoices = (peeps, possibles) ->
   peeps.map ((x) ->
-    x.choices = @choices(x, peeps)
+    x.choices = @choices(x, possibles)
     x
   ), this
 
@@ -112,10 +116,12 @@ WhoCtrl::nextPeep = ->
 
 WhoCtrl::gameOver = ->
   @done = true
-  return
 
 WhoCtrl::reset = ->
-  @peeps = shuffle(@addChoices(@turnIntoObjects(peepsData)))
+  @peeps = shuffle(@addChoices(
+    @turnIntoObjects(peepsData[-@identify...]),
+    @turnIntoObjects(peepsData[-@choose...])
+  ))
   @index = -1
   @nextPeep()
   @score = 0
@@ -124,6 +130,8 @@ WhoCtrl::reset = ->
   @done = false
   @guessed = undefined
   return
+
+WhoCtrl::quit = -> @gameOver()
 
 angular.module("who", ["cfp.hotkeys"]).config((hotkeysProvider) ->
   hotkeysProvider.includeCheatSheet = false

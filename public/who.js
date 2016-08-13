@@ -34,10 +34,14 @@ choose a random element from an array
     this.pageTitle = pageTitle;
     this.pageHeader = $sce.trustAsHtml(pageHeader);
     this.pageFooter = $sce.trustAsHtml(pageFooter);
-    this.reset();
+    this.done = true;
     hotkeys.add("1", "Select the first person", this.getGuessCallback(0));
     hotkeys.add("2", "Select the second person", this.getGuessCallback(1));
     hotkeys.add("3", "Select the third person", this.getGuessCallback(2));
+    this.ranges = [10000, 100, 50, 10];
+    this.identify = 10000;
+    this.choose = 10000;
+    console.log("done", this.done);
     return this;
   };
 
@@ -73,9 +77,9 @@ choose a random element from an array
     return false;
   };
 
-  WhoCtrl.prototype.addChoices = function(peeps) {
+  WhoCtrl.prototype.addChoices = function(peeps, possibles) {
     return peeps.map((function(x) {
-      x.choices = this.choices(x, peeps);
+      x.choices = this.choices(x, possibles);
       return x;
     }), this);
   };
@@ -136,11 +140,11 @@ choose a random element from an array
   };
 
   WhoCtrl.prototype.gameOver = function() {
-    this.done = true;
+    return this.done = true;
   };
 
   WhoCtrl.prototype.reset = function() {
-    this.peeps = shuffle(this.addChoices(this.turnIntoObjects(peepsData)));
+    this.peeps = shuffle(this.addChoices(this.turnIntoObjects(peepsData.slice(-this.identify)), this.turnIntoObjects(peepsData.slice(-this.choose))));
     this.index = -1;
     this.nextPeep();
     this.score = 0;
@@ -148,6 +152,10 @@ choose a random element from an array
     this.total = this.peeps.length;
     this.done = false;
     this.guessed = void 0;
+  };
+
+  WhoCtrl.prototype.quit = function() {
+    return this.gameOver();
   };
 
   angular.module("who", ["cfp.hotkeys"]).config(function(hotkeysProvider) {
