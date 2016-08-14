@@ -46,7 +46,7 @@ def Main():
       var pageHeader = '<img src="%(IMAGE_DIR)s/logo.png">\\'s <img src="%(IMAGE_DIR)s/logo.png">s <img src="%(IMAGE_DIR)s/logo.png">aterer';
       var pageFooter = 'Not seeing any images? Make sure you have visited ' +
           '<a href="%(BASE_URL)s">this url<a/> first. ' +
-          'Pro-tip you can use the number keys to make your selection';
+          'Pro-tip you can use the number keys to make your selection.';
 
       var femaleNames = ('carolyn,lara,elfe,margaret,lissa,elena,anika,sara,emi,courtney,jenny,laura,' +
           'jeanne,esther,nicole,lindsey,erin,kendra,kimberly,abby,brie,amber,angela,kelly,alisa,haarthi,' +
@@ -55,7 +55,9 @@ def Main():
           'olivia,karishma,lynelle,sharon,jen,jessica,jennifer,louise,arielle,megan,lara,paola,allegra,' +
           'stacy,martha,vicki,lili').split(',');
 
-      module = module || {};
+      if (typeof module !== "object")
+        module = {};
+
       module.exports = module.exports || {};
 
       module.exports.getPeepsData = function() {

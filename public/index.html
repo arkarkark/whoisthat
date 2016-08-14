@@ -67,6 +67,18 @@
     </ul>
 
 
+    <h2>Number of options to guess per person:</h2>
+
+    <ul>
+      <li ng-repeat="x in whoCtrl.optionsRange">
+        <label>
+          <input name="numOptions" ng-model="whoCtrl.numOfOptions" type="radio" ng-value="x">{{x}}
+        </label>
+      </li>
+    </ul>
+
+
+
     <div>
       <button ng-show="whoCtrl.score" ng-click="whoCtrl.reset()">Try again</button>
       <button ng-hide="whoCtrl.score" ng-click="whoCtrl.reset()">Play!</button>

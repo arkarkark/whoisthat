@@ -4,13 +4,14 @@ choose a random element from an array
  */
 
 (function() {
-  var WhoCtrl, choose, shuffle;
+  var WhoCtrl, choose, m, shuffle;
 
-  choose = function(arr, opt_not, opt_hasFemaleName) {
+  choose = function(arr, opt_not) {
     var ans;
     ans = arr[Math.floor(Math.random() * arr.length)];
-    if ((opt_not && (opt_not === ans || opt_not.indexOf(ans) !== -1)) || ((opt_hasFemaleName != null) && ans.hasFemaleName !== opt_hasFemaleName)) {
-      return choose(arr, opt_not, opt_hasFemaleName);
+    console.log(arr, opt_not, ans);
+    if (opt_not && (opt_not === ans || opt_not.indexOf(ans) !== -1)) {
+      return choose(arr, opt_not);
     }
     return ans;
   };
@@ -30,18 +31,21 @@ choose a random element from an array
   };
 
   WhoCtrl = function($sce, $timeout, hotkeys) {
+    var k, x;
+    this.allPeeps = this.turnIntoObjects(peepsData);
     this.timeout = $timeout;
     this.pageTitle = pageTitle;
     this.pageHeader = $sce.trustAsHtml(pageHeader);
     this.pageFooter = $sce.trustAsHtml(pageFooter);
     this.done = true;
-    hotkeys.add("1", "Select the first person", this.getGuessCallback(0));
-    hotkeys.add("2", "Select the second person", this.getGuessCallback(1));
-    hotkeys.add("3", "Select the third person", this.getGuessCallback(2));
+    for (x = k = 1; k <= 9; x = ++k) {
+      hotkeys.add("" + x, "Select person " + x, this.getGuessCallback(x - 1));
+    }
     this.ranges = [10000, 100, 50, 10];
     this.identify = 10000;
     this.choose = 10000;
-    console.log("done", this.done);
+    this.optionsRange = [2, 3, 5, 9];
+    this.numOfOptions = 3;
     return this;
   };
 
@@ -54,15 +58,17 @@ choose a random element from an array
   };
 
   WhoCtrl.prototype.turnIntoObjects = function(peeps) {
-    return peeps.map((function(x) {
-      return {
-        img: x[0],
-        name: x[1],
-        dept: x[2],
-        hasFemaleName: this.isFemaleName(x[1]),
-        choices: this.choices(x, peeps)
+    return peeps.map((function(_this) {
+      return function(x) {
+        return {
+          img: x[0],
+          name: x[1],
+          dept: x[2],
+          hasFemaleName: _this.isFemaleName(x[1]),
+          choices: [x]
+        };
       };
-    }), this);
+    })(this));
   };
 
   WhoCtrl.prototype.isFemaleName = function(name) {
@@ -78,18 +84,24 @@ choose a random element from an array
   };
 
   WhoCtrl.prototype.addChoices = function(peeps, possibles) {
-    return peeps.map((function(x) {
-      x.choices = this.choices(x, possibles);
-      return x;
-    }), this);
+    var femalePossibles, malePossibles;
+    malePossibles = _.where(possibles, {
+      hasFemaleName: false
+    });
+    femalePossibles = _.where(possibles, {
+      hasFemaleName: true
+    });
+    return peeps.map((function(_this) {
+      return function(x) {
+        x.choices = _this.choices(x, x.hasFemaleName ? femalePossibles : malePossibles);
+        return x;
+      };
+    })(this));
   };
 
   WhoCtrl.prototype.choices = function(peep, peeps) {
-    var ans;
-    ans = [peep];
-    ans.push(choose(peeps, ans, peep.hasFemaleName));
-    ans.push(choose(peeps, ans, peep.hasFemaleName));
-    return shuffle(ans);
+    shuffle(peeps);
+    return shuffle([peep].concat(peeps.slice(0, +(this.numOfOptions - 2) + 1 || 9e9)));
   };
 
   WhoCtrl.prototype.countPercent = function() {
@@ -114,10 +126,18 @@ choose a random element from an array
     if (guess === this.peep) {
       this.correct = true;
       this.score += 1;
-      this.timeout(angular.bind(this, this.nextPeep), 500);
+      this.timeout((function(_this) {
+        return function() {
+          return _this.nextPeep();
+        };
+      })(this), 500);
     } else {
       this.correct = false;
-      this.timeout(angular.bind(this, this.nextPeep), 3000);
+      this.timeout((function(_this) {
+        return function() {
+          return _this.nextPeep();
+        };
+      })(this), 3000);
     }
     return this.count += 1;
   };
@@ -144,7 +164,7 @@ choose a random element from an array
   };
 
   WhoCtrl.prototype.reset = function() {
-    this.peeps = shuffle(this.addChoices(this.turnIntoObjects(peepsData.slice(-this.identify)), this.turnIntoObjects(peepsData.slice(-this.choose))));
+    this.peeps = shuffle(this.addChoices(this.allPeeps.slice(-this.identify), this.allPeeps.slice(-this.choose)));
     this.index = -1;
     this.nextPeep();
     this.score = 0;
@@ -158,8 +178,12 @@ choose a random element from an array
     return this.gameOver();
   };
 
-  angular.module("who", ["cfp.hotkeys"]).config(function(hotkeysProvider) {
-    hotkeysProvider.includeCheatSheet = false;
-  }).controller("WhoCtrl", WhoCtrl);
+  m = angular.module("who", ["cfp.hotkeys"]);
+
+  m.config(function(hotkeysProvider) {
+    return hotkeysProvider.includeCheatSheet = false;
+  });
+
+  m.controller("WhoCtrl", WhoCtrl);
 
 }).call(this);

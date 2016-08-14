@@ -11,12 +11,12 @@
 ###
 choose a random element from an array
 ###
-choose = (arr, opt_not, opt_hasFemaleName) ->
+choose = (arr, opt_not) ->
   ans = arr[Math.floor(Math.random() * arr.length)]
-  if ((opt_not && (opt_not is ans || opt_not.indexOf(ans) != -1)) ||
-      (opt_hasFemaleName? && ans.hasFemaleName != opt_hasFemaleName))
+  console.log(arr, opt_not, ans)
+  if (opt_not && (opt_not is ans || opt_not.indexOf(ans) != -1))
     # Try again... don't judge me!
-    return choose(arr, opt_not, opt_hasFemaleName)
+    return choose(arr, opt_not)
   ans
 
 #+ Jonas Raoni Soares Silva
@@ -34,19 +34,22 @@ shuffle = (o) ->
   o
 
 WhoCtrl = ($sce, $timeout, hotkeys) ->
+  @allPeeps = @turnIntoObjects(peepsData)
+
   @timeout = $timeout
   @pageTitle = pageTitle
   @pageHeader = $sce.trustAsHtml(pageHeader)
   @pageFooter = $sce.trustAsHtml(pageFooter)
   @done = true
-  hotkeys.add "1", "Select the first person", @getGuessCallback(0)
-  hotkeys.add "2", "Select the second person", @getGuessCallback(1)
-  hotkeys.add "3", "Select the third person", @getGuessCallback(2)
+  for x in [1..9]
+    hotkeys.add "#{x}", "Select person #{x}", @getGuessCallback(x - 1)
+
   @ranges = [10000,100,50,10]
   @identify = 10000
   @choose = 10000
+  @optionsRange = [2, 3, 5, 9]
+  @numOfOptions = 3
 
-  console.log("done", @done)
   @
 
 WhoCtrl::getGuessCallback = (idx) ->
@@ -54,13 +57,12 @@ WhoCtrl::getGuessCallback = (idx) ->
 
 
 WhoCtrl::turnIntoObjects = (peeps) ->
-  peeps.map(((x) ->
+  peeps.map (x) =>
     img: x[0]
     name: x[1]
     dept: x[2]
     hasFemaleName: @isFemaleName(x[1])
-    choices: @choices(x, peeps)
-  ), this)
+    choices: [x]
 
 WhoCtrl::isFemaleName = (name) ->
   name = name.toLowerCase()
@@ -69,16 +71,16 @@ WhoCtrl::isFemaleName = (name) ->
   return false
 
 WhoCtrl::addChoices = (peeps, possibles) ->
-  peeps.map ((x) ->
-    x.choices = @choices(x, possibles)
+  malePossibles   = _.where(possibles, hasFemaleName: false)
+  femalePossibles = _.where(possibles, hasFemaleName: true)
+
+  peeps.map (x) =>
+    x.choices = @choices(x, if x.hasFemaleName then femalePossibles else malePossibles)
     x
-  ), this
 
 WhoCtrl::choices = (peep, peeps) ->
-  ans = [peep]
-  ans.push(choose(peeps, ans, peep.hasFemaleName))
-  ans.push(choose(peeps, ans, peep.hasFemaleName))
-  shuffle(ans)
+  shuffle(peeps)
+  shuffle([peep].concat(peeps[0..@numOfOptions - 2]))
 
 WhoCtrl::countPercent = ->
   return "" unless @total
@@ -94,10 +96,17 @@ WhoCtrl::guess = (guess) ->
   if guess is @peep
     @correct = true
     @score += 1
-    @timeout angular.bind(this, @nextPeep), 500
+    @timeout(
+      => @nextPeep()
+      500
+    )
   else
     @correct = false
-    @timeout angular.bind(this, @nextPeep), 3000
+    @timeout(
+      => @nextPeep()
+      3000
+    )
+
   @count += 1
 
 WhoCtrl::nextPeep = ->
@@ -118,10 +127,7 @@ WhoCtrl::gameOver = ->
   @done = true
 
 WhoCtrl::reset = ->
-  @peeps = shuffle(@addChoices(
-    @turnIntoObjects(peepsData[-@identify...]),
-    @turnIntoObjects(peepsData[-@choose...])
-  ))
+  @peeps = shuffle(@addChoices(@allPeeps[-@identify...], @allPeeps[-@choose...]))
   @index = -1
   @nextPeep()
   @score = 0
@@ -133,7 +139,6 @@ WhoCtrl::reset = ->
 
 WhoCtrl::quit = -> @gameOver()
 
-angular.module("who", ["cfp.hotkeys"]).config((hotkeysProvider) ->
-  hotkeysProvider.includeCheatSheet = false
-  return
-).controller("WhoCtrl", WhoCtrl)
+m = angular.module("who", ["cfp.hotkeys"])
+m.config (hotkeysProvider) -> hotkeysProvider.includeCheatSheet = false
+m.controller("WhoCtrl", WhoCtrl)
