@@ -35,7 +35,8 @@ shuffle = (o) ->
 
 WhoCtrl = ($sce, $timeout, hotkeys) ->
   @allPeeps = @turnIntoObjects(peepsData)
-
+  @typeyMode = "true"
+  @fullNames = ""
   @timeout = $timeout
   @pageTitle = pageTitle
   @pageHeader = $sce.trustAsHtml(pageHeader)
@@ -44,13 +45,13 @@ WhoCtrl = ($sce, $timeout, hotkeys) ->
   for x in [1..9]
     hotkeys.add "#{x}", "Select person #{x}", @getGuessCallback(x - 1)
 
-  @ranges = [10000,100,50,10]
+  @ranges = [10000, 100, 50, 10]
   @identify = 10000
   @choose = 10000
   @optionsRange = [2, 3, 5, 9]
   @numOfOptions = 3
 
-  @
+  return @
 
 WhoCtrl::getGuessCallback = (idx) ->
   => @guess(@peep.choices[idx])
@@ -91,26 +92,33 @@ WhoCtrl::scorePercent = ->
   "(#{Math.floor((@score * 100) / @count)}%)"
 
 WhoCtrl::guess = (guess) ->
-  return  if @guessed
+  return if @guessed
   @guessed = guess
   if guess is @peep
-    @correct = true
-    @score += 1
-    @timeout(
-      => @nextPeep()
-      500
-    )
+    @right()
   else
-    @correct = false
-    @timeout(
-      => @nextPeep()
-      3000
-    )
+    @wrong()
 
+WhoCtrl::right = ->
   @count += 1
+  @correct = true
+  @score += 1
+  @timeout(
+    => @nextPeep()
+    500
+  )
+
+WhoCtrl::wrong = ->
+  @count += 1
+  @correct = false
+  @timeout(
+    => @nextPeep()
+    3000
+  )
 
 WhoCtrl::nextPeep = ->
   @index += 1
+  @typed = ""
   @correct = undefined
   @guessed = undefined
   if @index < @peeps.length
@@ -127,7 +135,7 @@ WhoCtrl::gameOver = ->
   @done = true
 
 WhoCtrl::reset = ->
-  @peeps = shuffle(@addChoices(@allPeeps[-@identify...], @allPeeps[-@choose...]))
+  @peeps = shuffle @addChoices @allPeeps[-@identify...], @allPeeps[-@choose...]
   @index = -1
   @nextPeep()
   @score = 0
@@ -135,7 +143,24 @@ WhoCtrl::reset = ->
   @total = @peeps.length
   @done = false
   @guessed = undefined
-  return
+
+  @fuzzy = FuzzySet()
+  for peep in @allPeeps
+    @fuzzy.add(@getName(peep.name))
+
+WhoCtrl::getName = (name) ->
+  if @fullNames then name else name.split(" ")[0]
+
+WhoCtrl::key = (event) ->
+  if event.which == 13
+
+    @guessed ?= """It was "#{@peep.name}" """
+    ans = @fuzzy.get(@typed)
+    console.log("fuzzy", JSON.stringify(ans))
+    for match in ans || []
+      if match[0] > 0.85 && match[1] == @getName(@peep.name)
+        return @right()
+    @wrong()
 
 WhoCtrl::quit = -> @gameOver()
 

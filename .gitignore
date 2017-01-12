@@ -6,3 +6,4 @@ image_base_dir.url
 .firebaserc
 node_modules
 public/config\ *
+public/third_party/fuzzyset.js

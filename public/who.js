@@ -33,6 +33,8 @@ choose a random element from an array
   WhoCtrl = function($sce, $timeout, hotkeys) {
     var k, x;
     this.allPeeps = this.turnIntoObjects(peepsData);
+    this.typeyMode = "true";
+    this.fullNames = "";
     this.timeout = $timeout;
     this.pageTitle = pageTitle;
     this.pageHeader = $sce.trustAsHtml(pageHeader);
@@ -124,27 +126,37 @@ choose a random element from an array
     }
     this.guessed = guess;
     if (guess === this.peep) {
-      this.correct = true;
-      this.score += 1;
-      this.timeout((function(_this) {
-        return function() {
-          return _this.nextPeep();
-        };
-      })(this), 500);
+      return this.right();
     } else {
-      this.correct = false;
-      this.timeout((function(_this) {
-        return function() {
-          return _this.nextPeep();
-        };
-      })(this), 3000);
+      return this.wrong();
     }
-    return this.count += 1;
+  };
+
+  WhoCtrl.prototype.right = function() {
+    this.count += 1;
+    this.correct = true;
+    this.score += 1;
+    return this.timeout((function(_this) {
+      return function() {
+        return _this.nextPeep();
+      };
+    })(this), 500);
+  };
+
+  WhoCtrl.prototype.wrong = function() {
+    this.count += 1;
+    this.correct = false;
+    return this.timeout((function(_this) {
+      return function() {
+        return _this.nextPeep();
+      };
+    })(this), 3000);
   };
 
   WhoCtrl.prototype.nextPeep = function() {
     var nextnext;
     this.index += 1;
+    this.typed = "";
     this.correct = void 0;
     this.guessed = void 0;
     if (this.index < this.peeps.length) {
@@ -164,6 +176,7 @@ choose a random element from an array
   };
 
   WhoCtrl.prototype.reset = function() {
+    var k, len, peep, ref, results;
     this.peeps = shuffle(this.addChoices(this.allPeeps.slice(-this.identify), this.allPeeps.slice(-this.choose)));
     this.index = -1;
     this.nextPeep();
@@ -172,6 +185,41 @@ choose a random element from an array
     this.total = this.peeps.length;
     this.done = false;
     this.guessed = void 0;
+    this.fuzzy = FuzzySet();
+    ref = this.allPeeps;
+    results = [];
+    for (k = 0, len = ref.length; k < len; k++) {
+      peep = ref[k];
+      results.push(this.fuzzy.add(this.getName(peep.name)));
+    }
+    return results;
+  };
+
+  WhoCtrl.prototype.getName = function(name) {
+    if (this.fullNames) {
+      return name;
+    } else {
+      return name.split(" ")[0];
+    }
+  };
+
+  WhoCtrl.prototype.key = function(event) {
+    var ans, k, len, match, ref;
+    if (event.which === 13) {
+      if (this.guessed == null) {
+        this.guessed = "It was \"" + this.peep.name + "\" ";
+      }
+      ans = this.fuzzy.get(this.typed);
+      console.log("fuzzy", JSON.stringify(ans));
+      ref = ans || [];
+      for (k = 0, len = ref.length; k < len; k++) {
+        match = ref[k];
+        if (match[0] > 0.85 && match[1] === this.getName(this.peep.name)) {
+          return this.right();
+        }
+      }
+      return this.wrong();
+    }
   };
 
   WhoCtrl.prototype.quit = function() {

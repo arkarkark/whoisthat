@@ -5,6 +5,7 @@
   <script src="third_party/angular.min.js"></script>
   <script src="third_party/mousetrap.min.js"></script>
   <script src="third_party/hotkeys.js"></script>
+  <script src="third_party/fuzzyset.js"></script>
   <script src="config.js"></script>
   <script src="who.js"></script>
   <link rel="stylesheet" type="text/css" href="css.css">
@@ -19,16 +20,31 @@
     <div class="headshot-container">
       <img ng-src="{{whoCtrl.peep.img}}" onprogress="console.log('loading')">
     </div>
-    <div class="guess-option" ng-click="whoCtrl.guess(option)"
-         ng-repeat="option in whoCtrl.peep.choices"
-         ng-class="{correct: whoCtrl.guessed && option == whoCtrl.peep,
-                    incorrect: whoCtrl.guessed == option && option != whoCtrl.peep}">
+    <div class="type-option" ng-show="whoCtrl.typeyMode"
+	 ng-class="{correct: whoCtrl.guessed && option == whoCtrl.peep,
+		    incorrect: whoCtrl.guessed == option && option != whoCtrl.peep}">
       <span class="check"
-            ng-class="{none: option != whoCtrl.guessed,
-                       yes:  option == whoCtrl.guessed && whoCtrl.correct === true,
-                       no: option == whoCtrl.guessed && whoCtrl.correct === false}"
-            ><img src="third_party/red-32259.svg"></span>
-      {{$index + 1}}. {{option.name}} - {{option.dept}}
+	    ng-class="{none: !whoCtrl.guessed,
+		       yes:   whoCtrl.guessed && whoCtrl.correct === true,
+		       no:    whoCtrl.guessed && whoCtrl.correct === false}"
+	    ><img src="third_party/red-32259.svg"></span>
+      <input focus class="typed" ng-model="whoCtrl.typed" ng-keypress="whoCtrl.key($event)">
+      <div class="guess-option typed" ng-show="whoCtrl.correct === false || !whoCtrl.fullNames" ng-bind="whoCtrl.guessed"></div>
+    </div>
+    <div ng-hide="whoCtrl.typeyMode">
+
+
+      <div class="guess-option" ng-click="whoCtrl.guess(option)"
+	   ng-repeat="option in whoCtrl.peep.choices track by $index"
+	   ng-class="{correct: whoCtrl.guessed && option == whoCtrl.peep,
+		      incorrect: whoCtrl.guessed == option && option != whoCtrl.peep}">
+	<span class="check"
+	      ng-class="{none: option != whoCtrl.guessed,
+			 yes:  option == whoCtrl.guessed && whoCtrl.correct === true,
+			 no: option == whoCtrl.guessed && whoCtrl.correct === false}"
+	      ><img src="third_party/red-32259.svg"></span>
+	{{$index + 1}}. {{option.name}} - {{option.dept}}
+      </div>
     </div>
     <div class="quit">
       <button ng-click="whoCtrl.quit()">Quit</button>
@@ -54,32 +70,65 @@
       </li>
     </ul>
 
-    <h2>Choose from:</h2>
+    <h2>Mode:</h2>
 
     <ul>
-      <li ng-repeat="x in whoCtrl.ranges" ng-hide="whoCtrl.identify > x">
-        <label>
-          <input name="choice" ng-model="whoCtrl.choose" type="radio" ng-value="x">{{
-            x == 10000 ? "Everyone" : x + " most recent Lookers"
-          }}
-        </label>
+      <li>
+	<label>
+	  <input name="mode" ng-model="whoCtrl.typeyMode" type="radio" value=""> Multiple Choice
+	</label>
+      </li>
+      <li>
+	<label>
+	  <input name="mode" ng-model="whoCtrl.typeyMode" type="radio" value="true"> Type Names
+	</label>
       </li>
     </ul>
 
+    <div ng-show="whoCtrl.typeyMode">
+      <h2>Match:</h2>
+      <ul>
+	<li>
+	  <label>
+	    <input name="fullNames" ng-model="whoCtrl.fullNames" type="radio" value=""> First Names
+	  </label>
+	</li>
+	<li>
+	  <label>
+	    <input name="fullNames" ng-model="whoCtrl.fullNames" type="radio" value="true"> Full Names
+	  </label>
+	</li>
+      </ul>
+    </div>
 
-    <h2>Number of options to guess per person:</h2>
+    <div ng-hide="whoCtrl.typeyMode">
+      <h2>Choose from:</h2>
 
-    <ul>
-      <li ng-repeat="x in whoCtrl.optionsRange">
-        <label>
-          <input name="numOptions" ng-model="whoCtrl.numOfOptions" type="radio" ng-value="x">{{x}}
-        </label>
-      </li>
-    </ul>
+      <ul>
+	<li ng-repeat="x in whoCtrl.ranges" ng-hide="whoCtrl.identify > x">
+	  <label>
+	    <input name="choice" ng-model="whoCtrl.choose" type="radio" ng-value="x">{{
+	      x == 10000 ? "Everyone" : x + " most recent Lookers"
+	    }}
+	  </label>
+	</li>
+      </ul>
+
+
+      <h2>Number of options to guess per person:</h2>
+
+      <ul>
+	<li ng-repeat="x in whoCtrl.optionsRange">
+	  <label>
+	    <input name="numOptions" ng-model="whoCtrl.numOfOptions" type="radio" ng-value="x">{{x}}
+	  </label>
+	</li>
+      </ul>
+    </div>
 
 
 
-    <div>
+    <div style="margin-top: 20px;">
       <button ng-show="whoCtrl.score" ng-click="whoCtrl.reset()">Try again</button>
       <button ng-hide="whoCtrl.score" ng-click="whoCtrl.reset()">Play!</button>
     </div>

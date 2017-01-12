@@ -43,6 +43,16 @@ h1 img {
   text-transform: capitalize;
 }
 
+.guess-option.typed {
+  margin-left: 30px;
+  margin-top: 10px;
+}
+
+input.typed {
+  position: relative;
+  top: -7px;
+}
+
 .check {
   overflow: hidden;
   max-width: 25px;
