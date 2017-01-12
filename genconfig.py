@@ -51,7 +51,8 @@ def Main():
       var femaleNames = ('carolyn,lara,elfe,margaret,lissa,elena,anika,sara,emi,courtney,jenny,laura,' +
           'jeanne,esther,nicole,lindsey,erin,kendra,kimberly,abby,brie,amber,angela,kelly,alisa,haarthi,' +
           'pansy,avery,katherine,megan,jen,jennifer,renee,caitlin,grace,daina,elizabeth,melinda,michelle,' +
-          'natalie,aisha,catherine,kim,cari,brynn,karina,shana,meg,loren,anicia,sarah,heidi,morgan,tamara,' +
+          'natalie,aisha,catherine,kim,cari,brynn,karina,shana,meg,loren,anicia,sarah,tig,danielle,' +
+          'heidi,morgan,tamara,' +
           'olivia,karishma,lynelle,sharon,jen,jessica,jennifer,louise,arielle,megan,lara,paola,allegra,' +
           'stacy,martha,vicki,lili,valia,maire,lisa,shilpa,alice,hidy,clara,zara').split(',');
 
