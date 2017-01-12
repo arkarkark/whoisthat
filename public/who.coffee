@@ -35,7 +35,7 @@ shuffle = (o) ->
 
 WhoCtrl = ($sce, $timeout, hotkeys) ->
   @allPeeps = @turnIntoObjects(peepsData)
-  @typeyMode = "true"
+  @typeyMode = ""
   @fullNames = ""
   @timeout = $timeout
   @pageTitle = pageTitle
@@ -158,7 +158,7 @@ WhoCtrl::key = (event) ->
     ans = @fuzzy.get(@typed)
     console.log("fuzzy", JSON.stringify(ans))
     for match in ans || []
-      if match[0] > 0.85 && match[1] == @getName(@peep.name)
+      if match[0] >= 0.8 && match[1] == @getName(@peep.name)
         return @right()
     @wrong()
 

@@ -33,7 +33,7 @@ choose a random element from an array
   WhoCtrl = function($sce, $timeout, hotkeys) {
     var k, x;
     this.allPeeps = this.turnIntoObjects(peepsData);
-    this.typeyMode = "true";
+    this.typeyMode = "";
     this.fullNames = "";
     this.timeout = $timeout;
     this.pageTitle = pageTitle;
@@ -214,7 +214,7 @@ choose a random element from an array
       ref = ans || [];
       for (k = 0, len = ref.length; k < len; k++) {
         match = ref[k];
-        if (match[0] > 0.85 && match[1] === this.getName(this.peep.name)) {
+        if (match[0] >= 0.8 && match[1] === this.getName(this.peep.name)) {
           return this.right();
         }
       }
