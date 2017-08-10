@@ -55,8 +55,9 @@ def Main():
           'heidi,morgan,tamara,olivia,karishma,lynelle,sharon,jen,jessica,jennifer,louise,arielle,megan,' +
           'lara,paola,allegra,stacy,martha,vicki,lili,valia,maire,lisa,shilpa,alice,hidy,clara,zara,' +
           'wiebke,teresa,larissa,heather,sangita,joyce,alba,aine,summer,shelley,erin,jean,tiffany,aleli,' +
-          'amy,jill,shanann,sooji,sara,alexis,ashley,jaime,danielle,sondra,hilary,mildred,aishwarya' +
-          'sloane,megan,emma,mary,kathryn,michelle,taylor,rachel').split(',');
+          'amy,jill,shanann,sooji,sara,alexis,ashley,alixandria,alix,jaime,danielle,sondra,hilary,' +
+          'keerthana,kirti,mildred,' +
+          'aishwarya,sloane,megan,emma,mary,kathryn,michelle,taylor,rachel').split(',');
 
       if (typeof module !== "object")
         module = {};
