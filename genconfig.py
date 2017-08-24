@@ -34,8 +34,8 @@ def Main():
   for emp in json.loads(looker_json):
     peep = []
     peep.append('%s%s.jpg' % (image_base_dir, emp['looker_profiles.username']))
-    peep.append('%s %s' % (emp['looker_profiles.first_name'], emp['looker_profiles.last_name']))
-    peep.append(emp['looker_profiles.teams'])
+    peep.append(emp['looker_profiles.name'])
+    peep.append(emp['looker_profiles.team'])
     print json.dumps(peep) + ","
 
   print textwrap.dedent("""
